@@ -7,6 +7,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use regex::Regex;
 use std::env;
+use std::fs;
 use std::path::PathBuf;
 use syn::{parse_macro_input, LitStr};
 
@@ -48,7 +49,7 @@ pub fn nomad_migrations(input: TokenStream) -> TokenStream {
                 .as_str()
                 .parse::<u64>()
                 .expect("Unable to parse version number"),
-            sql: std::fs::read_to_string(entry_path).expect("Failed to read migration SQL"),
+            sql: fs::read_to_string(entry_path).expect("Failed to read migration SQL"),
         });
     }
 
@@ -56,6 +57,6 @@ pub fn nomad_migrations(input: TokenStream) -> TokenStream {
 
     // We've sorted the migrations ahead of time, so the invariant is preserved
     TokenStream::from(
-        quote! { unsafe { ::nomad::ordered::OrderedArray::new_unsafe([#(#sorted_migrations), *]) } }
+        quote! { unsafe { ::nomad::ordered::OrderedArray::new_unsafe([#(#sorted_migrations), *]) } },
     )
 }
