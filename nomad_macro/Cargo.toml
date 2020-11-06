@@ -1,0 +1,13 @@
+[package]
+name = "nomad_macro"
+version = "0.1.0"
+authors = ["Olivia Trewin <trewinolivia@gmail.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+syn = "1"
+regex = "1"
