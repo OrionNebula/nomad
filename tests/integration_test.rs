@@ -217,7 +217,7 @@ mod rusqlite {
 }
 
 mod ordered {
-    use ::nomad::{ordered::OrderedArray, Migration};
+    use ::nomad::{Migration, OrderedMigrations};
 
     #[test]
     fn into() {
@@ -232,7 +232,7 @@ mod ordered {
             },
         ];
 
-        let arr: OrderedArray<Migration, _> = MIGRATIONS.into();
+        let arr: OrderedMigrations<_> = MIGRATIONS.into();
 
         assert_eq!(
             arr.into_iter().map(|m| m.version).collect::<Vec<u64>>(),
@@ -264,12 +264,12 @@ mod ordered {
             },
         ];
 
-        match OrderedArray::try_new(&SORTED_MIGRATIONS) {
+        match OrderedMigrations::try_new(&SORTED_MIGRATIONS) {
             None => panic!("Sorted migrations failed to create"),
             _ => {}
         }
 
-        match OrderedArray::try_new(&UNSORTED_MIGRATIONS) {
+        match OrderedMigrations::try_new(&UNSORTED_MIGRATIONS) {
             Some(_) => panic!("Unsorted migrations created as sorted"),
             _ => {}
         }

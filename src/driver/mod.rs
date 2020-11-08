@@ -6,7 +6,12 @@ mod sqlx;
 
 use std::error::Error;
 
-pub trait Driver<'a> where Self: Sized, Self::Error: Error, Self::Transaction: Transaction<'a, Self> {
+pub trait Driver<'a>
+where
+    Self: Sized,
+    Self::Error: Error,
+    Self::Transaction: Transaction<'a, Self>,
+{
     type Transaction;
     type Error;
 
@@ -25,5 +30,9 @@ pub trait Transaction<'a, D: Driver<'a>> {
     fn execute_sql(&mut self, sql: &str) -> Result<(), <D as Driver<'a>>::Error>;
 
     // Update the latest migrated version for a given namespace
-    fn push_latest_version(&mut self, namespace: &str, version: u64) -> Result<(), <D as Driver<'a>>::Error>;
+    fn push_latest_version(
+        &mut self,
+        namespace: &str,
+        version: u64,
+    ) -> Result<(), <D as Driver<'a>>::Error>;
 }

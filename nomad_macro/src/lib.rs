@@ -57,6 +57,6 @@ pub fn nomad_migrations(input: TokenStream) -> TokenStream {
 
     // We've sorted the migrations ahead of time, so the invariant is preserved
     TokenStream::from(
-        quote! { unsafe { ::nomad::ordered::OrderedArray::new_unsafe([#(#sorted_migrations), *]) } },
+        quote! { unsafe { ::nomad::OrderedMigrations::new_unsafe([#(#sorted_migrations), *]) } },
     )
 }

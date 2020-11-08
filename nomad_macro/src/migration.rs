@@ -1,4 +1,4 @@
-use quote::{ quote, ToTokens };
+use quote::{quote, ToTokens};
 
 // Wraps a migration as parsed from the disk.
 pub(crate) struct Migration {

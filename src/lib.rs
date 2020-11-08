@@ -12,12 +12,13 @@ extern crate sqlx;
 mod driver;
 mod error;
 mod migration;
-pub mod ordered;
+mod ordered;
 
 pub use driver::{Driver, Transaction};
 pub use error::*;
 pub use migration::*;
 
+pub type OrderedMigrations<'a, T> = ordered::OrderedArray<Migration<'a>, T>;
 pub const DEFAULT_NAMESPACE: &'static str = "nomad";
 
 pub struct MigrationRunner<'d, 'n, D: Driver<'d>> {
@@ -39,11 +40,7 @@ impl<'d, 'n, D: Driver<'d>> MigrationRunner<'d, 'n, D> {
         MigrationRunner { driver, namespace }
     }
 
-    pub fn migrate<
-        'a,
-        T: AsRef<[Migration<'a>]>,
-        C: Into<ordered::OrderedArray<Migration<'a>, T>>,
-    >(
+    pub fn migrate<'a, T: AsRef<[Migration<'a>]>, C: Into<OrderedMigrations<'a, T>>>(
         self,
         migrations: C,
     ) -> Result<Option<u64>, MigrationError<D::Error>> {

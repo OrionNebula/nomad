@@ -12,7 +12,7 @@ impl PartialEq for Migration<'_> {
     }
 }
 
-impl Eq for Migration<'_>{}
+impl Eq for Migration<'_> {}
 
 impl PartialOrd for Migration<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {

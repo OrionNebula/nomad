@@ -1,16 +1,22 @@
-use std::marker::PhantomData;
 use std::borrow::Borrow;
+use std::marker::PhantomData;
 use std::slice;
 
-pub struct OrderedArray<T, C: AsRef<[T]>>(C, PhantomData<T>) where T: Ord;
+pub struct OrderedArray<T, C: AsRef<[T]>>(C, PhantomData<T>)
+where
+    T: Ord;
 
-impl<T, C: AsRef<[T]>> OrderedArray<T, C> where T: Ord {
-    // Create a new OrderedSliceLike, assuming the container is already ordered
+impl<T, C: AsRef<[T]>> OrderedArray<T, C>
+where
+    T: Ord,
+{
+    // Create a new OrderedArray, assuming the container is already ordered
     pub unsafe fn new_unsafe(container: C) -> Self {
         OrderedArray(container, PhantomData)
     }
 
-    // Attempt to create a new
+    // Attempt to create a new OrderedArray from a container.
+    // Returns None if the container is not already sorted.
     pub fn try_new(container: C) -> Option<Self> {
         let mut last_item: Option<&T> = None;
 
@@ -58,14 +64,20 @@ impl<T: Ord, C: AsRef<[T]>> Borrow<[T]> for OrderedArray<T, C> {
 
 // Allow conversion of a borrowed slice-like to a owned slice-like without copying
 // Transposes the reference from the outside to the inside
-impl<'a, T: Ord, C: AsRef<[T]>> From<&'a OrderedArray<T, C>> for OrderedArray<T, &'a OrderedArray<T, C>> {
+impl<'a, T: Ord, C: AsRef<[T]>> From<&'a OrderedArray<T, C>>
+    for OrderedArray<T, &'a OrderedArray<T, C>>
+{
     fn from(slice_ref: &'a OrderedArray<T, C>) -> Self {
         OrderedArray(slice_ref, PhantomData)
     }
 }
 
 // Allow the creation of an ordered slice-like
-impl<'a, T, C> From<&'a C> for OrderedArray<T, Vec<T>> where T: Ord + Clone, &'a C: Iterator<Item = T> {
+impl<'a, T, C> From<&'a C> for OrderedArray<T, Vec<T>>
+where
+    T: Ord + Clone,
+    &'a C: Iterator<Item = T>,
+{
     fn from(container: &'a C) -> Self {
         let mut vec: Vec<T> = container.collect();
         vec.sort_unstable();
